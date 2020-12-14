@@ -1,0 +1,10 @@
+.parts {
+  display: flex;
+}
+
+.part:first-of-type {
+  padding-right: 2rem;
+  margin-right: 2rem;
+  border-right: 1px solid #999;
+  min-width: 10rem;
+}
