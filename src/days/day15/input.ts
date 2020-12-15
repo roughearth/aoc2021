@@ -1,5 +1,3 @@
-export const eg1 = `
-`;
+export const eg1 = `0,3,6 `;
 
-export const input = `
-`;
+export const input = `6,19,0,5,7,13,1`;
