@@ -84,7 +84,8 @@
       "react-app/jest"
     ],
     "rules": {
-      "@typescript-eslint/no-redeclare": "off"
+      "@typescript-eslint/no-redeclare": "off",
+      "no-loop-func": "off"
     }
   },
   "browserslist": {

@@ -19,7 +19,8 @@ const dayList = Array(25).fill(1).map((_, n) => (n + 1));
 
 function safetyNet({
   maxLoops = 1e4,
-  maxMs = 5_000
+  maxMs = 5_000,
+  logLoopInterval = (maxLoops / 10)
 }: Day['meta'] = {}): SafetyNet {
   let start = performance.now();
   let ct = 0;
@@ -27,7 +28,7 @@ function safetyNet({
   let reason = "pass";
 
   return {
-    fails() {
+    fails(logMessage) {
       duration = Math.round(performance.now() - start);
       if (++ct > maxLoops){
         reason = "Too many loops";
@@ -37,6 +38,11 @@ function safetyNet({
         reason = "Too long";
         return true;
       }
+
+      if (logMessage && (logLoopInterval > 0) && !(ct % logLoopInterval)) {
+        console.log(logMessage(ct, duration))
+      }
+
       return false;
     },
     get reason() {
