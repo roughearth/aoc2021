@@ -54,6 +54,13 @@ function safetyNet({
 function App() {
   const [day, setDay] = useState(today);
 
+  useEffect(
+    () => {
+      console.clear()
+    },
+    [day]
+  );
+
   const changeDay = useCallback(
     ({target: {value}}) => {
       setDay(value);

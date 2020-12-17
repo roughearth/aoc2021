@@ -8,15 +8,9 @@ export function part1() {
   const tickets = cleanAndParse(nearbyTickets, parseTicket);
   const ranges = fields.flatMap(f => f.ranges);
 
-  let errorRate = tickets.reduce(
-    (t, ticket) => {
-      const invalidParts = ticket.filter(n => invalid(n, ranges));
-      const invalidSum = invalidParts.reduce((a, b) => (a + b), 0);
-
-      return t + invalidSum;
-    },
-    0
-  );
+  let errorRate = tickets.flat()
+    .filter(n => invalid(n, ranges))
+    .reduce((a, b) => (a + b), 0);
 
   // 20058
   return errorRate;
@@ -67,18 +61,17 @@ export function part2() {
 }
 
 function reduce(sets: Set<string>[]) {
-  let decided = sets.filter(s => s.size === 1);
-  let choices = sets.filter(s => s.size !== 1);
+  let choices = sets;
 
   while (choices.length) {
+    let decided = choices.filter(s => s.size === 1);
+    choices = choices.filter(s => s.size !== 1);
+
     choices.forEach(set => {
       decided.forEach(d => {
         set.delete(Array.from(d)[0]);
       })
     });
-
-    decided = choices.filter(s => s.size === 1);
-    choices = choices.filter(s => s.size !== 1);
   }
 }
 

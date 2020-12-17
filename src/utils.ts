@@ -69,3 +69,77 @@ export function* coordinates2d({
     }
   }
 }
+
+export function* coordinates3d(
+  minx: number,
+  maxx: number,
+  miny: number,
+  maxy: number,
+  minz: number,
+  maxz: number,
+) {
+  for (let z = minz; z <= maxz; z++) {
+    for (let y = miny; y <= maxy; y++) {
+      for (let x = minx; x <= maxx; x++) {
+        yield [x, y, z];
+      }
+    }
+  }
+}
+
+export function* coordinates4d(
+  minx: number,
+  maxx: number,
+  miny: number,
+  maxy: number,
+  minz: number,
+  maxz: number,
+  minw: number,
+  maxw: number,
+) {
+  for (let w = minw; w <= maxw; w++) {
+    for (let z = minz; z <= maxz; z++) {
+      for (let y = miny; y <= maxy; y++) {
+        for (let x = minx; x <= maxx; x++) {
+          yield [x, y, z, w];
+        }
+      }
+    }
+  }
+}
+
+export function* neighbours3d(
+  cx: number,
+  cy: number,
+  cz: number
+) {
+  for (const [x, y, z] of coordinates3d(
+    cx - 1, cx + 1,
+    cy - 1, cy + 1,
+    cz - 1, cz + 1
+  )) {
+    if (x === cx && y === cy && z === cz) {
+      continue;
+    }
+    yield [x, y, z];
+  }
+}
+
+export function* neighbours4d(
+  cx: number,
+  cy: number,
+  cz: number,
+  cw: number
+) {
+  for (const [x, y, z, w] of coordinates4d(
+    cx - 1, cx + 1,
+    cy - 1, cy + 1,
+    cz - 1, cz + 1,
+    cw - 1, cw + 1
+  )) {
+    if (x === cx && y === cy && z === cz && w === cw) {
+      continue;
+    }
+    yield [x, y, z, w];
+  }
+}
