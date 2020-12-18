@@ -108,6 +108,58 @@ export function* coordinates4d(
   }
 }
 
+export function* coordinatesAnyD(limits: [number, number][]) {
+  const current: number[] = limits.map(([min]) => min);
+
+  let SAFE = 1000;
+
+  outer:
+  while (true) {
+    if (!--SAFE) {throw new Error("Unsafe")}
+
+    let i = limits.length - 1;
+
+    yield [...current];
+
+    while (true) {
+      const next = current[i] + 1;
+
+      if (next > limits[i][1]) {
+        if (i > 0) {
+          current[i] = limits[i][0];
+          i -= 1;
+        }
+        else {
+          break outer;
+        }
+      }
+      else {
+        current[i] = next;
+        break;
+      }
+    }
+  }
+}
+
+export function* neighboursAnyD(center: number[]) {
+  const limits: [number, number][] = center.map(c => [c - 1, c + 1]);
+
+  for (const neighbour of coordinatesAnyD(limits)) {
+    if (neighbour.reduce((b, c, i) => (b && c === center[i]), true)) {
+      continue;
+    }
+    yield neighbour;
+  }
+}
+
+export function getKeyAnyD(keys: number[], dim: number): string {
+  return JSON.stringify(Object.assign(Array(dim), keys).slice(0, dim));
+}
+
+export function parseKeyAnyD(key: string, dim: number): number[] {
+  return Object.assign(Array(dim), JSON.parse(key)).slice(0, dim);
+}
+
 export function* neighbours3d(
   cx: number,
   cy: number,

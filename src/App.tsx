@@ -2,18 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {Days, Day, SafetyNet} from './days';
 import './App.css';
 import { timeAndRun } from './utils';
+import leaderBoardMap from './.leaderboardListRc.json'
 
 const today = (() => {
   const now = new Date();
   return now.getDate();
 })();
-
-const leaderboardList = window.localStorage.getItem('leaderboardList');
-let leaderBoardMap: [string, string][] = [];
-
-if (leaderboardList) {
-  leaderBoardMap = JSON.parse(leaderboardList);
-}
 
 const dayList = Array(25).fill(1).map((_, n) => (n + 1));
 
