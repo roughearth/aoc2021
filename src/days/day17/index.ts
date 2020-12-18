@@ -1,15 +1,32 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
-import {cleanAndParse, coordinates2d, coordinates3d, coordinates4d, neighbours3d, neighbours4d} from '../../utils';
+import {
+  getKeyAnyD,
+  neighboursAnyD,
+  coordinatesAnyD,
+
+  cleanAndParse,
+  coordinates2d,
+  coordinates3d,
+  coordinates4d,
+  neighbours3d,
+  neighbours4d
+} from '../../utils';
+
+
+export const meta = {
+  manualStart: true
+};
 
 export function part1() {
-  let space = getSpacePart1(input);
+  let space = getSpace(input, 3);
 
   for (let g = 0; g < 6; g++) {
-    space = getNextSpacePart1(space);
+    space = getNextSpace(space, 3);
   }
 
-  return countActivePart1(space);
+  //301
+  return countActive(space);
 }
 
 export function part2() {
@@ -19,8 +36,93 @@ export function part2() {
     space = getNextSpacePart2(space);
   }
 
+  //2424
   return countActivePart2(space);
 }
+
+/*
+ _    . .    _
+|_||\| Y    | \
+| || | |    |_/
+*/
+
+function countActive(space: Space): number {
+  return Array.from(space.cubes.values()).filter(v => !!v).length;
+}
+
+function getNextSpace(space: Space, dims: number): Space {
+  const cubes = new Map();
+  const range: [number, number][] = space.range.map(
+    ([min, max]) => [min - 1, max + 1]
+  );
+
+  for (const coord of coordinatesAnyD(range)) {
+    const ct = countActiveNeighbours(coord, space.cubes, dims);
+    const k = getKeyAnyD(coord, dims);
+    const state = !!space.cubes.get(k);
+
+    if (state && [2, 3].includes(ct)) {
+      cubes.set(k, true);
+    }
+    else if (!state && ct === 3) {
+      cubes.set(k, true);
+    }
+  }
+
+  return {
+    cubes,
+    range
+  }
+}
+
+function countActiveNeighbours(coord: number[], cubes: Space['cubes'], dims: number) {
+  let t = 0;
+
+  for (const neighbour of neighboursAnyD(coord)) {
+    const k = getKeyAnyD(neighbour, dims);
+
+    if (cubes.get(k) === true) {
+      t++;
+    }
+  }
+
+  return t;
+}
+
+function getSpace(input: string, dims: number) {
+  const data = cleanAndParse(input, l => Array.from(l));
+  const cubes = new Map<string, boolean>();
+
+  const {length: height, 0: {length: width}} = data;
+
+  for (const {row: y, column: x} of coordinates2d({width, height})) {
+    cubes.set(getKeyAnyD([x, y], dims), data[y][x] === "#")
+  }
+
+  const range: [number, number][] = [
+    [0, width - 1],
+    [0, height - 1]
+  ];
+
+  while (range.length < dims) {
+    range.push([0, 0]);
+  }
+
+  return {
+    cubes,
+    range
+  }
+}
+
+type Space = ReturnType<typeof getSpace>;
+
+
+/*
+ _  _  _ ___   __
+|_)|_||_) |     _)
+|  | || \ |    /__
+*/
+
 
 function getKeyPart2(x: number, y: number, z: number, w: number) {
   return JSON.stringify([x, y, z, w]);
@@ -127,6 +229,14 @@ function getSpacePart2(input: string) {
 }
 
 type SpacePart2 = ReturnType<typeof getSpacePart2>;
+
+/*
+ _  _  _ ___
+|_)|_||_) |    /|
+|  | || \ |     |
+*/
+
+
 
 
 function getKeyPart1(x: number, y: number, z: number) {

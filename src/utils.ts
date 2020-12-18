@@ -111,7 +111,7 @@ export function* coordinates4d(
 export function* coordinatesAnyD(limits: [number, number][]) {
   const current: number[] = limits.map(([min]) => min);
 
-  let SAFE = 1000;
+  let SAFE = 1e6;
 
   outer:
   while (true) {
@@ -153,11 +153,11 @@ export function* neighboursAnyD(center: number[]) {
 }
 
 export function getKeyAnyD(keys: number[], dim: number): string {
-  return JSON.stringify(Object.assign(Array(dim), keys).slice(0, dim));
+  return JSON.stringify(Object.assign(Array(dim).fill(0), keys).slice(0, dim));
 }
 
 export function parseKeyAnyD(key: string, dim: number): number[] {
-  return Object.assign(Array(dim), JSON.parse(key)).slice(0, dim);
+  return Object.assign(Array(dim).fill(0), JSON.parse(key)).slice(0, dim);
 }
 
 export function* neighbours3d(
