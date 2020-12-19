@@ -243,6 +243,7 @@ function getKeyPart1(x: number, y: number, z: number) {
   return JSON.stringify([x, y, z]);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function countActivePart1(space: SpacePart1): number {
   const minx = space.x[0];
   const maxx = space.x[1];
@@ -269,7 +270,7 @@ function countActivePart1(space: SpacePart1): number {
   return total;
 }
 
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getNextSpacePart1(space: SpacePart1): SpacePart1 {
   const cubes = new Map();
   const minx = space.x[0] - 1;

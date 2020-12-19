@@ -19,6 +19,7 @@
 .env.production.local
 .eslintcache
 .leaderboardListRc.json
+*.draft
 
 npm-debug.log*
 yarn-debug.log*

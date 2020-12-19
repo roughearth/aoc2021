@@ -21,6 +21,15 @@ export function indexify<T>(
   }, {} as Record<string, T>);
 }
 
+export function indexifyAsMap<T, S>(
+  items: T[],
+  key: (i: T) => S
+): Map<S, T> {
+  return items.reduce((o, b) => {
+    o.set(key(b), b); // need to be fast for large arrays
+    return o;
+  }, new Map<S, T>());
+}
 
 export function timeAndRun<T extends string | number>(fn: () => T ): [result: T, duration: number] {
   const then = performance.now();
