@@ -85,6 +85,7 @@
     ],
     "rules": {
       "@typescript-eslint/no-redeclare": "off",
+      "@typescript-eslint/consistent-type-assertions": "off",
       "no-loop-func": "off"
     }
   },
