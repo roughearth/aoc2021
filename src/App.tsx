@@ -41,7 +41,9 @@ function safetyNet({
     },
     get reason() {
       return `${reason} (${ct} loops in ${duration}ms)`;
-    }
+    },
+    get duration() { return duration; },
+    get loops() { return ct; }
   };
 }
 

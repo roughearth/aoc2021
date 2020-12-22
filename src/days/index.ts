@@ -27,6 +27,8 @@ import * as day25 from './day25';
 export type SafetyNet = {
   fails: (logMessage?: (ct: number, duration: number) => string | number) => boolean;
   reason: string;
+  duration: number;
+  loops: number;
 }
 
 export type Day = {
