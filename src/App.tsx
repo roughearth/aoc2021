@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {Days, Day, SafetyNet} from './days';
+import {Days} from './days';
 import './App.css';
-import { timeAndRun } from './utils';
+import { safetyNet, timeAndRun } from './utils';
 import leaderBoardMap from './.leaderboardListRc.json'
 
 const today = (() => {
@@ -11,41 +11,7 @@ const today = (() => {
 
 const dayList = Array(25).fill(1).map((_, n) => (n + 1));
 
-function safetyNet({
-  maxLoops = 1e4,
-  maxMs = 5_000,
-  logLoopInterval = (maxLoops / 10)
-}: Day['meta'] = {}): SafetyNet {
-  let start = performance.now();
-  let ct = 0;
-  let duration = 0;
-  let reason = "pass";
 
-  return {
-    fails(logMessage) {
-      duration = Math.round(performance.now() - start);
-      if (++ct > maxLoops){
-        reason = "Too many loops";
-        return true;
-      }
-      if (duration > maxMs) {
-        reason = "Too long";
-        return true;
-      }
-
-      if (logMessage && (logLoopInterval > 0) && !(ct % logLoopInterval)) {
-        console.log(logMessage(ct, duration))
-      }
-
-      return false;
-    },
-    get reason() {
-      return `${reason} (${ct} loops in ${duration}ms)`;
-    },
-    get duration() { return duration; },
-    get loops() { return ct; }
-  };
-}
 
 function App() {
   const [day, setDay] = useState(today);
