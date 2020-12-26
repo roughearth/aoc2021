@@ -4,10 +4,10 @@ import './App.css';
 import { safetyNet, timeAndRun } from './utils';
 import leaderBoardMap from './.leaderboardListRc.json'
 
-const today = (() => {
+const today = Math.min(25, (() => {
   const now = new Date();
   return now.getDate();
-})();
+})());
 
 const dayList = Array(25).fill(1).map((_, n) => (n + 1));
 

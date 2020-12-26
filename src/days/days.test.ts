@@ -26,7 +26,7 @@ describe.each([
   [22, 33925, 33441],
   [23, "76385429", 12621748849],
   [24, 300, 3466],
-  [25],
+  [25, 711945],
 ])("Day %i", (d: number, ans1?: number | string, ans2?: number | string) => {
   const day = Days[`day${d}`];
 

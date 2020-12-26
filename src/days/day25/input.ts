@@ -1,5 +1,3 @@
-export const eg1 = `
-`;
-
 export const input = `
-`;
+11239946
+10464955`;
