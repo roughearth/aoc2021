@@ -68,10 +68,6 @@ export function part2() {
 
     blackCells = nextGen;
     bounds = [...nextBounds];
-
-    // if ((gen < 10) || (gen % 10 === 0)) {
-    //   console.log(`Day ${gen}: ${blackCells.size}`);
-    // }
   }
 
   return blackCells.size;
@@ -84,12 +80,11 @@ function updateBounds(
   y:number,
   [minx, miny, maxx, maxy]: Bounds
 ): Bounds {
-  const {min, max, floor, ceil} = Math;
   return [
-    min(minx, floor(x - 1)),
-    min(miny, y - 1),
-    max(maxx, ceil(x + 1)),
-    max(maxy, y + 1)
+    Math.min(minx, x - 1),
+    Math.min(miny, y - 1),
+    Math.max(maxx, x + 1),
+    Math.max(maxy, y + 1)
   ];
 }
 
@@ -109,19 +104,19 @@ function* hexCoordinates(
   maxy: number,
 ) {
   for (let y = miny; y <= maxy; y++) {
-    for (let x = minx + (0.5 * (y % 2)); x <= maxx; x++) {
+    for (let x = minx; x <= maxx; x++) {
       yield [x, y];
     }
   }
 }
 
 const vectors: Record<string, number[]> = {
-  nw: [-0.5, -1],
-  ne: [ 0.5, -1],
-   e: [   1,  0],
-  se: [ 0.5,  1],
-  sw: [-0.5,  1],
-   w: [  -1,  0],
+  nw: [ 0, -1],
+  ne: [ 1, -1],
+   w: [-1,  0],
+   e: [ 1,  0],
+  sw: [-1,  1],
+  se: [ 0,  1],
 };
 
 function getCoordinates(path: string[]): string {
