@@ -10,7 +10,7 @@ So we can check 7^n != 1 for each of the following.
 * (choose 2) 6, 58, 232198, 87, 348297, 3366871,
 * (choose 3) 10100613, 6733742, 696594, 174,
 
-# Baby-step giant-step algorithm for a modulal logarithm
+# Baby-step giant-step algorithm for a modular logarithm
 
 (From https://en.wikipedia.org/wiki/Baby-step_giant-step)
 

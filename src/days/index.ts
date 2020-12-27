@@ -1,3 +1,4 @@
+import { SafetyNet } from '../utils';
 import * as day1 from './day1';
 import * as day2 from './day2';
 import * as day3 from './day3';
@@ -24,12 +25,6 @@ import * as day23 from './day23';
 import * as day24 from './day24';
 import * as day25 from './day25';
 
-export type SafetyNet = {
-  fails: (logMessage?: (ct: number, duration: number) => string | number) => boolean;
-  reason: string;
-  duration: number;
-  loops: number;
-}
 
 export type Day = {
   part1: (f: SafetyNet) => string | number;
@@ -41,8 +36,6 @@ export type Day = {
     logLoopInterval?: number;
   }
 }
-
-export const simpleSafetyLog: Parameters<SafetyNet['fails']>[0] = (ct, d) => `${ct} @ ${d}ms`;
 
 export const Days: Record<string, Day> = {
   day1,

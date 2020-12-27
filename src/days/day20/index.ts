@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
 import {cleanAndParse, coordinates2d} from '../../utils';
-import { SafetyNet } from '..';
 
 export function part1() {
   const tileset = paresTiles(input);
@@ -14,7 +13,7 @@ export function part1() {
   );
 }
 
-export function part2(safetyNet: SafetyNet) {
+export function part2() {
   const tileset = paresTiles(input);
   const {
     corners: cornerTiles,

@@ -1,6 +1,5 @@
 import {input} from './input';
 import {cleanAndParse} from '../../utils';
-import { SafetyNet } from '..';
 
 export function part1() {
   const values = cleanAndParse(input, evaluatePart1);
@@ -8,7 +7,7 @@ export function part1() {
   return values.reduce((a, b) => (a + b));
 }
 
-export function part2(safetyNet: SafetyNet) {
+export function part2() {
   const values = cleanAndParse(input, evaluatePart2);
 
   return values.reduce((a, b) => (a + b));//
