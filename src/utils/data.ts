@@ -31,6 +31,13 @@ export function indexifyAsMap<T, S>(
   }, new Map<S, T>());
 }
 
+export function generateArray<T>(length: number, generate: (i: number) => T): T[] {
+  return Array.from(
+    {length},
+    (_, i) => generate(i)
+  );
+}
+
 export function timeAndRun<T extends string | number>(fn: () => T ): [result: T, duration: number] {
   const then = performance.now();
   const result = fn();

@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
+import { generateArray } from '../../utils';
 
 export const meta = {
   manualStart: true
@@ -23,90 +24,98 @@ function runGame(startPack: string, packSize: number, gameLength: number, limit:
   let {current, index} = createCircle(startPack, packSize);
 
   for (let ct = 0; ct < gameLength; ct++) {
-    const {next, excluded} = extract3(current);
+    const excluded = extract3(current, index);
     const after = getNextInsert(current, excluded, index);
-    insert3After(next, after);
-    current = current.next;
+    insert3(excluded, after, index);
+    current = index[current];
   }
 
-  return getOrder(index, {limit}).slice(1)
+  return getOrder(index, {limit}).slice(1);
 }
 
-function getNextInsert(current: Item, excluded: Set<number>, index: Circle['index']) {
-  let i = current.value;
-  const {size} = index;
+function getNextInsert(current: number, excluded: number[], index: Circle['index']) {
+  const ex = new Set(excluded);
+  const {length} = index;
+  let safe = length;
 
   do {
-    i = (i + size) % (size + 1);
+    if (!--safe) {
+      throw new Error("Unsafe");
+    }
+    current -= 1;
+    if (current === 0) {
+      current = length - 1;
+    }
   }
-  while(excluded.has(i) || i === 0);
+  while(ex.has(current));
 
-  return <Item>index.get(i);
+  return current;
 }
 
-function extract3(current: Item) {
-  const next = current.next;
-  const last = current.next.next.next;
-  const excluded = new Set([
-    current.next.value,
-    current.next.next.value,
-    current.next.next.next.value
-  ]);
+function extract3(after: number, index: Circle['index']) {
+  const first = index[after];
+  const middle = index[first];
+  const last = index[middle];
+  const post = index[last];
 
-  current.next = last.next;
-  last.next = next;
+  const excluded = [
+    first, middle, last
+  ];
 
-  return {next, excluded};
+  index[after] = post;
+
+  return excluded;
 }
 
-function insert3After(insert: Item, after: Item) {
-  const next = after.next;
-  const last = insert.next.next;
-
-  after.next = insert;
-  last.next = next;
+function insert3([first, middle, last]: number[], after: number, index: number[]) {
+  const post = index[after];
+  index[after] = first;
+  index[first] = middle;
+  index[middle] = last;
+  index[last] = post;
 }
 
 function getOrder(index: Circle['index'], {start = 1, limit = 10} = {}): number[] {
-  let current = <Item>index.get(start);
+  let current = index[start];
 
-  let order = [];
+  let order = [start];
   do {
-    order.push(current.value);
-    current = current.next;
+    order.push(current);
+    current = index[current];
   }
-  while(current.value !== start && order.length < limit)
+  while(current !== start && order.length < limit)
 
   return order;
 }
 
 function createCircle(input: string, length = input.length) {
-  const index = new Map<number, Item>();
-  const tmp: any = {value: -1};
-  tmp.next = tmp;
-
-  const cards: Item[] = Array.from(
-    {length},
-    (_, i) => {
-      let value = i + 1;
-      if (i < 9) {
-        value = Number(input[i])
+  const cups: number[] = generateArray(
+    length,
+    i => {
+      if (i >= 9) {
+        return i + 1;
       }
-      return {value, next: tmp};
+      return Number(input[i]);
     }
   );
 
-  cards.forEach((card, i) => {
-    index.set(card.value, card)
-    card.next = cards[(i + 1) % length]
-  })
+  const index: number[] = generateArray(
+    length + 1,
+    i => {
+      if (i === 0) {
+        return 0;
+      }
+      if (i <= 10) {
+        return cups[(cups.indexOf(i) + 1) % length]
+      }
+      if (i === length) {
+        return cups[0]
+      }
+      return i + 1;
+    }
+  );
 
-  return {current: cards[0], index};
+  return {current: cups[0], index};
 }
 
 type Circle = ReturnType<typeof createCircle>;
-
-type Item = {
-  value: number;
-  next: Item;
-}
