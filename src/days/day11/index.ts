@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
-import {cleanAndParse, coordinates2d} from '../../utils';
+import {cleanAndParse, coordinates as gridCoordinates, neighbours, simpleRange} from '../../utils';
 
 export const meta = {
   manualStart: false
@@ -13,13 +13,13 @@ const FLOOR = ".";
 export function part1() {
   const grid = toGrid(input);
 
-  return runPart(grid, 4, countAdjacentPart1); // expect 2368 | 37
+  return runPart(grid, 4, countAdjacentPart1); // expect 2368
 }
 
 export function part2() {
   const grid = toGrid(input);
 
-  return runPart(grid, 5, countAdjacentPart2); // expect 2124 | 26
+  return runPart(grid, 5, countAdjacentPart2); // expect 2124
 }
 
 function runPart(grid: Grid, threshhold: number, countAdjacent: (row: number, column: number, grid: Grid) => number) {
@@ -29,7 +29,7 @@ function runPart(grid: Grid, threshhold: number, countAdjacent: (row: number, co
   do {
     const nextMap: string[][] = [...Array(grid.height)].map(() => []);
 
-    for (const {row, column} of coordinates2d(grid)) {
+    for (const [row, column] of coordinates(grid)) {
       const count = countAdjacent(row, column, grid);
 
       if ((count === 0) && (grid.map[row][column] === EMPTY)) {
@@ -69,16 +69,7 @@ function toGrid(input: string): Grid {
   return {map, width, height};
 }
 
-const DIRECTIONS = [
-  [-1, -1],
-  [-1,  0],
-  [-1,  1],
-  [ 0, -1],
-  [ 0,  1],
-  [ 1, -1],
-  [ 1,  0],
-  [ 1,  1],
-];
+const DIRECTIONS = Array.from(neighbours([0, 0]));
 
 function countAdjacentPart1(row: number, column: number, grid: Grid) {
   return DIRECTIONS.reduce(
@@ -144,11 +135,15 @@ function toString(map: Grid["map"]): string {
 function passengerCount({map, ...size}: Grid): number {
   let total = 0;
 
-  for (const {row, column} of coordinates2d(size)) {
+  for (const [row, column] of coordinates(size)) {
     if (map[row][column] === FULL) {
       total += 1;
     }
   }
 
   return total;
+}
+
+function coordinates({height, width}: Pick<Grid, "width" | "height">) {
+  return gridCoordinates(simpleRange([height, width]))
 }

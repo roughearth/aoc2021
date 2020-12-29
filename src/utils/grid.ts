@@ -1,79 +1,49 @@
-export function* coordinates2d({
-  height,
-  width
-}: {
-  height: number,
-  width: number
-}) {
-  for (let row = 0; row < height; row++) {
-    for (let column = 0; column < width; column++) {
-      yield {row, column};
-    }
+export type CoordinateRange = [number, number][];
+
+/**
+ * Return a `CoordinateRange` from 0 with the given count of coordinates in each dimension
+ * @param sizes array of the size in each dimension. Range is 0...(size - 1)
+ * @param dims number of dimensions required, defaults to the number of `sizes` given
+ */
+export function simpleRange(sizes: number[], dims = sizes.length): CoordinateRange {
+  const range = sizes.map(m => [0, m - 1]);
+
+  while (range.length < dims) {
+    range.push([0, 0]);
   }
+
+  return <CoordinateRange>range;
 }
 
-export function* coordinates3d(
-  minx: number,
-  maxx: number,
-  miny: number,
-  maxy: number,
-  minz: number,
-  maxz: number,
-) {
-  for (let z = minz; z <= maxz; z++) {
-    for (let y = miny; y <= maxy; y++) {
-      for (let x = minx; x <= maxx; x++) {
-        yield [x, y, z];
-      }
-    }
-  }
-}
-
-export function* coordinates4d(
-  minx: number,
-  maxx: number,
-  miny: number,
-  maxy: number,
-  minz: number,
-  maxz: number,
-  minw: number,
-  maxw: number,
-) {
-  for (let w = minw; w <= maxw; w++) {
-    for (let z = minz; z <= maxz; z++) {
-      for (let y = miny; y <= maxy; y++) {
-        for (let x = minx; x <= maxx; x++) {
-          yield [x, y, z, w];
-        }
-      }
-    }
-  }
-}
-
-export function* coordinatesAnyD(limits: [number, number][]) {
-  const current: number[] = limits.map(([min]) => min);
-
-  let SAFE = 1e6;
+/**
+ * Generate all possible tuples of coordinates in the given `CoordinateRange`
+ * @param limits
+ */
+export function* coordinates(limits: CoordinateRange) {
+  const current: number[] = limits.map(([min]) => min); // start at all the mins
+  const lastDim = limits.length - 1;
 
   outer:
-  while (true) {
-    if (!--SAFE) {throw new Error("Unsafe")}
+  while (true) { // will break when there are no more coords to yeild
+    // (re)set to changing the "right-most" dimension
+    let i = lastDim;
+    let [min, max] = limits[lastDim];
 
-    let i = limits.length - 1;
-
+    // copy it to avoid accidental mutation;
     yield [...current];
 
-    while (true) {
+    while (true) { // increment, moving "left" until wrapping is uncessessary
       const next = current[i] + 1;
 
-      if (next > limits[i][1]) {
-        if (i > 0) {
-          current[i] = limits[i][0];
-          i -= 1;
-        }
-        else {
+      if (next > max) {
+        if (i === 0) {
+          // moving "left" isn't possible
           break outer;
         }
+
+        current[i] = min;
+        i -= 1;
+        [min, max] = limits[i];
       }
       else {
         current[i] = next;
@@ -83,10 +53,15 @@ export function* coordinatesAnyD(limits: [number, number][]) {
   }
 }
 
-export function* neighboursAnyD(center: number[]) {
-  const limits: [number, number][] = center.map(c => [c - 1, c + 1]);
+/**
+ * Generate *all* the neighbours of the given coordinate, even "diagonals".
+ * (ie all the coordinates that differ by 1 in 1 or more dimensions)
+ * @param center
+ */
+export function* neighbours(center: number[]) {
+  const limits: CoordinateRange = center.map(c => [c - 1, c + 1]);
 
-  for (const neighbour of coordinatesAnyD(limits)) {
+  for (const neighbour of coordinates(limits)) {
     if (neighbour.reduce((b, c, i) => (b && c === center[i]), true)) {
       continue;
     }
@@ -94,46 +69,45 @@ export function* neighboursAnyD(center: number[]) {
   }
 }
 
-export function getKeyAnyD(keys: number[], dim: number): string {
-  return JSON.stringify(Object.assign(Array(dim).fill(0), keys).slice(0, dim));
-}
+/**
+ * Generate all the orthogonal neighbours of the given coordinate.
+ * (ie all the coordinates that differ by 1 in exactly 1 dimension)
+ * @param center
+ */
+export function* orthogonalNeighbours(center: number[]) {
+  let dim = center.length;
+  const diffs = [-1, 1];
 
-export function parseKeyAnyD(key: string, dim: number): number[] {
-  return Object.assign(Array(dim).fill(0), JSON.parse(key)).slice(0, dim);
-}
-
-export function* neighbours3d(
-  cx: number,
-  cy: number,
-  cz: number
-) {
-  for (const [x, y, z] of coordinates3d(
-    cx - 1, cx + 1,
-    cy - 1, cy + 1,
-    cz - 1, cz + 1
-  )) {
-    if (x === cx && y === cy && z === cz) {
-      continue;
+  while (dim--) {
+    for (const d of diffs) {
+      const neighbour = [...center];
+      neighbour[dim] += d;
+      yield neighbour;
     }
-    yield [x, y, z];
   }
 }
 
-export function* neighbours4d(
-  cx: number,
-  cy: number,
-  cz: number,
-  cw: number
-) {
-  for (const [x, y, z, w] of coordinates4d(
-    cx - 1, cx + 1,
-    cy - 1, cy + 1,
-    cz - 1, cz + 1,
-    cw - 1, cw + 1
-  )) {
-    if (x === cx && y === cy && z === cz && w === cw) {
-      continue;
-    }
-    yield [x, y, z, w];
-  }
+/**
+ * Pad a coordinate with trailing zeros to match the given dimension count
+ * @param coords
+ * @param dims
+ */
+export function padCoordinate(coords: number[], dims: number) {
+  return Object.assign(Array(dims).fill(0), coords);
+}
+
+/**
+ * Turn a coordinate in to a key suitable for a map
+ * @param coords
+ */
+export function getKey(coords: number[]): string {
+  return coords.join();
+}
+
+/**
+ * Parse a key created by `getKey` in to coordinates
+ * @param key
+ */
+export function parseKey(key: string): number[] {
+  return key.split(",").map(Number);
 }

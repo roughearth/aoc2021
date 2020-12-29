@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input} from './input';
-import {isGenerator, cleanAndParse, modPow, modular, primeFactorise, isPrime} from '../../utils';
+import {cleanAndParse, modular} from '../../utils';
 
 
 export function part1() {

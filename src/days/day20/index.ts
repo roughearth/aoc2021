@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
-import {cleanAndParse, coordinates2d} from '../../utils';
+import {cleanAndParse, coordinates as gridCoordinates, simpleRange} from '../../utils';
 
 export function part1() {
   const tileset = paresTiles(input);
@@ -32,7 +32,7 @@ export function part2() {
 
   tileGrid[0][0] = startingTile;
 
-  for(const {row, column} of coordinates2d({width: size, height: size})) {
+  for(const [row, column] of coordinates(size)) {
     if (row === 0 && column === 0) {
       continue;
     }
@@ -100,7 +100,7 @@ export function part2() {
 
   const mainMap: string[][] = [];
 
-  for(const {row, column} of coordinates2d({width: size, height: size})) {
+  for(const [row, column] of coordinates(size)) {
     const {src, orientation: {flip, rotation}} = tileGrid[row][column];
 
     const tile = orientedTile(src, flip, rotation, true);
@@ -219,6 +219,10 @@ function findSides({tiles}: TileSet) {
   };
 }
 
+function coordinates(size: number) {
+  return gridCoordinates(simpleRange([size, size]));
+}
+
 const Rotation = <const>[0, 1, 2, 3];
 type Rotation = (typeof Rotation)[number];
 
@@ -245,15 +249,15 @@ function paresTiles(input: string) {
       const left = lines.map(l => l[0]);
       const right = lines.map(l => l[SIDE - 1]);
 
-      const T = toMask(top, false);
-      const R = toMask(right, false);
-      const B = toMask(bottom, false);
-      const L = toMask(left, false);
+      const  T = toMask(top   , false);
+      const  R = toMask(right , false);
+      const  B = toMask(bottom, false);
+      const  L = toMask(left  , false);
 
-      const _T = toMask(top, true);
-      const _R = toMask(right, true);
+      const _T = toMask(top   , true);
+      const _R = toMask(right , true);
       const _B = toMask(bottom, true);
-      const _L = toMask(left, true);
+      const _L = toMask(left  , true);
 
       const maskValues =     [ T,  R,  B,  L];
       const reversedValues = [_T, _R, _B, _L];
@@ -307,7 +311,7 @@ function orientedTile(src: string[], flip: Flip, rotation: Rotation, trim = true
     grid.reverse();
   }
 
-  for(const {row, column} of coordinates2d({width: size, height: size})) {
+  for(const [row, column] of coordinates(size)) {
     switch (rotation) {
       case 0:
         out[row][column] = grid[row][column];
