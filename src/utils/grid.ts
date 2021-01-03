@@ -87,6 +87,40 @@ export function* orthogonalNeighbours(center: number[]) {
   }
 }
 
+const HEX_DIFFS = [
+  [-1,  0],
+  [ 0, -1],
+  [-1,  1],
+  [ 1, -1],
+  [ 0,  1],
+  [ 1,  0],
+
+]
+
+const DIFFS = [
+  [ 0,  0, -1],
+  [-1,  0, -1],
+  [ 0, -1, -1],
+
+  ...HEX_DIFFS.map(d => [...d, 0]),
+
+  [ 0,  1,  1],
+  [ 1,  0,  1],
+  [ 0,  0,  1],
+];
+
+export function* hexagonalNeighbors([x, y]: number[]) {
+  for(const [dx, dy] of HEX_DIFFS) {
+    yield [x + dx, y + dy];
+  }
+}
+
+export function* faceCentredCubicNeighbors([x, y, z]: number[]) {
+  for(const [dx, dy, dz] of DIFFS) {
+    yield [x + dx, y + dy, z + dz];
+  }
+}
+
 /**
  * Pad a coordinate with trailing zeros to match the given dimension count
  * @param coords
