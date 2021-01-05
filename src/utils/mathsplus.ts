@@ -86,3 +86,24 @@ export function isGenerator(gen: number, mod: number) {
 
   return true;
 }
+
+export function gcd(a: number, b: number, ...more: number[]): number {
+  if (more.length) {
+    // reduce pairwise
+    return [a, b, ...more].reduce((a, b) => gcd(a, b));
+  }
+
+  // want a to be biggest
+  if(b > a) {
+    [a, b] = [b, a];
+  }
+
+  // Enhanced Euclidean algorithm
+  const m = a % b;
+
+  if (m === 0) {
+    return b
+  }
+
+  return gcd(b, m);
+}
