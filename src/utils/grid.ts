@@ -6,13 +6,33 @@ export type CoordinateRange = [number, number][];
  * @param dims number of dimensions required, defaults to the number of `sizes` given
  */
 export function simpleRange(sizes: number[], dims = sizes.length): CoordinateRange {
-  const range = sizes.map(m => [0, m - 1]);
+  const range: CoordinateRange = sizes.map(m => [0, m - 1]);
+  validateRange(range);
 
   while (range.length < dims) {
     range.push([0, 0]);
   }
 
-  return <CoordinateRange>range;
+  return range;
+}
+
+/**
+ * Returns a new range that's more expansive in every direction by the given amount
+ * @param range
+ * @param by
+ */
+export function growRange(range: CoordinateRange, by = 1): CoordinateRange {
+  return range.map(([min, max]) => [min - by, max + by]);
+}
+
+function validateRange(range: CoordinateRange) {
+  range.forEach(([min, max], i) => {
+    if (min > max) {
+      throw new Error(`Range is invalid at dimension ${i + 1}, ${min} > ${max}`)
+    }
+  });
+
+  return true;
 }
 
 /**
@@ -20,6 +40,7 @@ export function simpleRange(sizes: number[], dims = sizes.length): CoordinateRan
  * @param limits
  */
 export function* coordinates(limits: CoordinateRange) {
+  validateRange(limits);
   const current: number[] = limits.map(([min]) => min); // start at all the mins
   const lastDim = limits.length - 1;
 
@@ -35,15 +56,15 @@ export function* coordinates(limits: CoordinateRange) {
     while (true) { // increment, moving "left" until wrapping is uncessessary
       const next = current[i] + 1;
 
-      if (next > max) {
+      if (next > max) { // can't go higher in this dimension
         if (i === 0) {
-          // moving "left" isn't possible
+          // moving "left" isn't possible, so stop
           break outer;
         }
 
-        current[i] = min;
-        i -= 1;
-        [min, max] = limits[i];
+        current[i] = min; // back to the beginning
+        i -= 1; // "left" a dimension
+        [min, max] = limits[i]; // read the limits
       }
       else {
         current[i] = next;
@@ -93,19 +114,19 @@ const HEX_DIFFS = [
   [-1,  1],
   [ 1, -1],
   [ 0,  1],
-  [ 1,  0],
-
+  [ 1,  0]
 ]
 
-const DIFFS = [
+// with this choice, all 3 planes are identically hexagonal
+const FCC_DIFFS = [
   [ 0,  0, -1],
-  [-1,  0, -1],
-  [ 0, -1, -1],
+  [ 0,  1, -1],
+  [ 1,  0, -1],
 
   ...HEX_DIFFS.map(d => [...d, 0]),
 
-  [ 0,  1,  1],
-  [ 1,  0,  1],
+  [-1,  0,  1],
+  [ 0, -1,  1],
   [ 0,  0,  1],
 ];
 
@@ -116,7 +137,7 @@ export function* hexagonalNeighbors([x, y]: number[]) {
 }
 
 export function* faceCentredCubicNeighbors([x, y, z]: number[]) {
-  for(const [dx, dy, dz] of DIFFS) {
+  for(const [dx, dy, dz] of FCC_DIFFS) {
     yield [x + dx, y + dy, z + dz];
   }
 }

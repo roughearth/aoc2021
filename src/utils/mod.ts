@@ -47,6 +47,10 @@ export function modAdd(a: number, b: number, mod: number) {
   return modLpr(a + b, mod);
 }
 
+export function modDouble(a: number, mod: number) {
+  return modAdd(a, a, mod);
+}
+
 export function modMul(a: number, b: number, mod: number) {
   if (a === 0 || b === 0) {
     return 0;
@@ -59,13 +63,17 @@ export function modMul(a: number, b: number, mod: number) {
 
   while (currentFactor > 0) {
     if (currentFactor % 2) {
-      total = modLpr(total + currentMultiple, mod);
+      total = modAdd(total, currentMultiple, mod);
     }
-    currentMultiple = modLpr(currentMultiple * 2, mod);
+    currentMultiple = modDouble(currentMultiple, mod);
     currentFactor = Math.floor(currentFactor / 2);
   }
 
   return total;
+}
+
+export function modSquare(a: number, mod: number) {
+  return modMul(a, a, mod);
 }
 
 export function modPow(n: number, pow: number, mod: number) {
@@ -77,7 +85,7 @@ export function modPow(n: number, pow: number, mod: number) {
     if (currentPower % 2) {
       total = modMul(total, currentSquare, mod);
     }
-    currentSquare = modMul(currentSquare, currentSquare, mod);
+    currentSquare = modSquare(currentSquare, mod);
     currentPower = Math.floor(currentPower / 2);
   }
 
