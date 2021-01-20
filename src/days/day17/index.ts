@@ -1,14 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
 import {
-  getKey,
+  getIntKey,
   neighbours,
   coordinates,
 
   cleanAndParse,
   simpleRange
 } from '../../utils';
-
 
 export const meta = {
   manualStart: true
@@ -46,7 +45,7 @@ function getNextSpace(space: Space, dims: number): Space {
 
   for (const coord of coordinates(range)) {
     const ct = countActiveNeighbours(coord, space.cubes, dims);
-    const k = getKey(coord);
+    const k = getIntKey(coord);
     const state = !!space.cubes.get(k);
 
     if (state && [2, 3].includes(ct)) {
@@ -67,7 +66,7 @@ function countActiveNeighbours(coord: number[], cubes: Space['cubes'], dims: num
   let t = 0;
 
   for (const neighbour of neighbours(coord)) {
-    const k = getKey(neighbour);
+    const k = getIntKey(neighbour);
 
     if (cubes.get(k) === true) {
       t++;
@@ -79,14 +78,14 @@ function countActiveNeighbours(coord: number[], cubes: Space['cubes'], dims: num
 
 function getSpace(input: string, dims: number) {
   const data = cleanAndParse(input, l => Array.from(l));
-  const cubes = new Map<string, boolean>();
+  const cubes = new Map<number, boolean>();
 
   const {length: height, 0: {length: width}} = data;
 
   const range = simpleRange([width, height], dims);
 
   for (const [x, y, ...rest] of coordinates(range)) {
-    cubes.set(getKey([x, y, ...rest]), data[y][x] === "#")
+    cubes.set(getIntKey([x, y, ...rest]), data[y][x] === "#")
   }
 
   return {

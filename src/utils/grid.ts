@@ -25,7 +25,10 @@ export function growRange(range: CoordinateRange, by = 1): CoordinateRange {
   return range.map(([min, max]) => [min - by, max + by]);
 }
 
-function validateRange(range: CoordinateRange) {
+function validateRange(range: CoordinateRange, dim = range.length) {
+  if (range.length !== dim) {
+    throw new Error(`Range has invalid at dimension size ${range.length} != ${dim}`)
+  }
   range.forEach(([min, max], i) => {
     if (min > max) {
       throw new Error(`Range is invalid at dimension ${i + 1}, ${min} > ${max}`)
@@ -152,11 +155,54 @@ export function padCoordinate(coords: number[], dims: number) {
 }
 
 /**
- * Turn a coordinate in to a key suitable for a map
+ * Turn a coordinate in to a string key suitable for a map
  * @param coords
  */
 export function getKey(coords: number[]): string {
   return coords.join();
+}
+
+/**
+ * Turn a coordinate in to an integer key suitable for a map
+ * NOTES: Limited for large ranges by MAX_SAFE_INTEGER, but much faster than `getKey`
+ * @param coords
+ */
+export function getIntKey(coords: number[], hashSize = 100): number {
+  let key = 0;
+  let pwr = 1;
+  const pwrChange = hashSize * 2;
+
+  for (const coord of coords) {
+    key += (coord + hashSize) * pwr;
+    pwr *= pwrChange;
+  }
+
+  return key;
+}
+
+/**
+ * Get a function for a given range that turns a coordinate in to a key suitable for a map.
+ * NOTE - THIS IS MUCH FASTER THAN `join`, BUT DOESN'T WORK FOR VARIABLE RANGES!!!!!!!!!!!
+ * IT IS ALSO LIMITED BY `MAX_SAFE_INTEGER`
+ * @param coords
+ */
+export function getRangeKey(range: CoordinateRange) {
+  validateRange(range);
+  const dim = range.length;
+  const sizes = range.map(([min, max]) => (max - min + 1));
+  const mins = range.map(([min]) => min);
+
+  return (coords: number[]) => {
+    let key = 0;
+    let pwr = 1;
+
+    for (let i = 0; i < dim; i++) {
+      key += (coords[i] - mins[i]) * pwr;
+      pwr *= sizes[i];
+    }
+
+    return key;
+  }
 }
 
 /**
