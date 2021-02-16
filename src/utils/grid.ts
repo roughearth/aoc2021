@@ -156,15 +156,19 @@ export function padCoordinate(coords: number[], dims: number) {
 
 /**
  * Turn a coordinate in to a string key suitable for a map
+ * NOTE: If the coordinate range has reasonable bounds, `getIntKey` is much faster
+ * Using an `ArrayKeyedMap` is also faster, if a little slower than `getIntKey`, but not size limited
  * @param coords
  */
 export function getKey(coords: number[]): string {
+  // join is much faster than JSON.stringify
   return coords.join();
 }
 
 /**
  * Turn a coordinate in to an integer key suitable for a map
  * NOTES: Limited for large ranges by MAX_SAFE_INTEGER, but much faster than `getKey`
+ * Using an `ArrayKeyedMap` is a little slower, but not size limited
  * @param coords
  */
 export function getIntKey(coords: number[], hashSize = 100): number {
@@ -178,37 +182,4 @@ export function getIntKey(coords: number[], hashSize = 100): number {
   }
 
   return key;
-}
-
-/**
- * Get a function for a given range that turns a coordinate in to a key suitable for a map.
- * NOTE - THIS IS MUCH FASTER THAN `join`, BUT DOESN'T WORK FOR VARIABLE RANGES!!!!!!!!!!!
- * IT IS ALSO LIMITED BY `MAX_SAFE_INTEGER`
- * @param coords
- */
-export function getRangeKey(range: CoordinateRange) {
-  validateRange(range);
-  const dim = range.length;
-  const sizes = range.map(([min, max]) => (max - min + 1));
-  const mins = range.map(([min]) => min);
-
-  return (coords: number[]) => {
-    let key = 0;
-    let pwr = 1;
-
-    for (let i = 0; i < dim; i++) {
-      key += (coords[i] - mins[i]) * pwr;
-      pwr *= sizes[i];
-    }
-
-    return key;
-  }
-}
-
-/**
- * Parse a key created by `getKey` in to coordinates
- * @param key
- */
-export function parseKey(key: string): number[] {
-  return key.split(",").map(Number);
 }

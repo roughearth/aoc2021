@@ -7,8 +7,7 @@ import {
   orthogonalNeighbours,
   padCoordinate,
   simpleRange,
-  getKey,
-  parseKey
+  getKey
 } from "./grid";
 
 describe("grid", () => {
@@ -351,9 +350,5 @@ describe("grid", () => {
 
   test("getKey", () => {
     expect(getKey([1, 2, 3])).toEqual("1,2,3");
-  });
-
-  test("parseKey", () => {
-    expect(parseKey("1,2,3")).toEqual([1, 2, 3]);
   });
 });

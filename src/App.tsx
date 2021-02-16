@@ -16,13 +16,6 @@ const dayList = Array(25).fill(1).map((_, n) => (n + 1));
 function App() {
   const [day, setDay] = useState(today);
 
-  useEffect(
-    () => {
-      console.clear()
-    },
-    [day]
-  );
-
   const changeDay = useCallback(
     ({target: {value}}) => {
       setDay(value);

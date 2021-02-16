@@ -2,7 +2,7 @@ import { Days } from '.';
 import { safetyNet } from '../utils';
 
 describe.each([
-// day,  part1          , part 2
+// day,  part 1 answer  , part 2 answer
   [ 1 ,  870331         , 283025088                                            ],
   [ 2 ,  396            , 428                                                  ],
   [ 3 ,  230            , 9533698720                                           ],
@@ -31,15 +31,15 @@ describe.each([
 ])("Day %i", (d: number, ans1?: number | string, ans2?: number | string) => {
   const day = Days[`day${d}`];
 
-  test("Part 1", () => {
-    if (ans1) {
+  if (ans1) {
+    test("Part 1", () => {
       expect(day.part1(safetyNet())).toEqual(ans1);
-    }
-  });
+    });
+  }
 
-  test("Part 2", () => {
-    if (ans2) {
+  if (ans2) {
+    test("Part 2", () => {
       expect(day.part2(safetyNet())).toEqual(ans2);
-    }
-  });
+    });
+  }
 })

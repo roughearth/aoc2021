@@ -9,7 +9,7 @@ describe("mathsplus", () => {
       [5, 10, 5],
       [7, 10, 1],
       [10, 10, 10],
-    ])("gcd %i & %i is %i", (a, b, g) => {
+    ])("2 values: gcd %i & %i is %i", (a, b, g) => {
       expect(gcd(a, b)).toBe(g);
     });
 
@@ -17,7 +17,7 @@ describe("mathsplus", () => {
       [[2, 4, 6, 8, 10, 12, 14, 16, 18, 20], 2],
       [[294, 357, 3003], 21],
       [[294, 357, 3003, 21, 17], 1],
-    ])("gcd %p is %i", ([a, b, ...r], g) => {
+    ])("multi values: gcd %p is %i", ([a, b, ...r], g) => {
       expect(gcd(a, b, ...r)).toBe(g);
     });
   });

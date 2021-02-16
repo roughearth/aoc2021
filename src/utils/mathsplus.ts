@@ -28,7 +28,7 @@ export function primeFactorise(n: number) {
   }
 
   if (n > 1) {
-    check(n)
+    check(n); // could just `push([n, 1])`, but `check` abstracts the final structure
   }
 
   return components;

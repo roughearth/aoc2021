@@ -4,3 +4,4 @@ export * from './grid';
 export * from './mod';
 export * from './safetynet';
 export * from './mathsplus';
+export * from './arrayKeyedMap';

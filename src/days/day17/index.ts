@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input, eg1} from './input';
 import {
-  getIntKey,
+  ArrayKeyedMap,
   neighbours,
   coordinates,
 
@@ -38,21 +38,20 @@ function countActive(space: Space): number {
 }
 
 function getNextSpace(space: Space, dims: number): Space {
-  const cubes = new Map();
+  const cubes = ArrayKeyedMap();
   const range: [number, number][] = space.range.map(
     ([min, max]) => [min - 1, max + 1]
   );
 
   for (const coord of coordinates(range)) {
     const ct = countActiveNeighbours(coord, space.cubes, dims);
-    const k = getIntKey(coord);
-    const state = !!space.cubes.get(k);
+    const state = !!space.cubes.get(coord);
 
     if (state && [2, 3].includes(ct)) {
-      cubes.set(k, true);
+      cubes.set(coord, true);
     }
     else if (!state && ct === 3) {
-      cubes.set(k, true);
+      cubes.set(coord, true);
     }
   }
 
@@ -66,9 +65,7 @@ function countActiveNeighbours(coord: number[], cubes: Space['cubes'], dims: num
   let t = 0;
 
   for (const neighbour of neighbours(coord)) {
-    const k = getIntKey(neighbour);
-
-    if (cubes.get(k) === true) {
+    if (cubes.get(neighbour) === true) {
       t++;
     }
   }
@@ -78,14 +75,14 @@ function countActiveNeighbours(coord: number[], cubes: Space['cubes'], dims: num
 
 function getSpace(input: string, dims: number) {
   const data = cleanAndParse(input, l => Array.from(l));
-  const cubes = new Map<number, boolean>();
+  const cubes = ArrayKeyedMap();
 
   const {length: height, 0: {length: width}} = data;
 
   const range = simpleRange([width, height], dims);
 
   for (const [x, y, ...rest] of coordinates(range)) {
-    cubes.set(getIntKey([x, y, ...rest]), data[y][x] === "#")
+    cubes.set([x, y, ...rest], data[y][x] === "#")
   }
 
   return {
