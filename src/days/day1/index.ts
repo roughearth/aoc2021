@@ -1,39 +1,42 @@
 import {input} from './input';
 import {cleanAndParse} from '../../utils';
 
-export const meta = {
-  manualStart: true
-};
+export const meta = {};
 
 export function part1() {
   const data = cleanAndParse(input, Number);
 
   const { length } = data;
+  let prev = data[0];
+  let up = 0;
 
-  for (let i = 0; i < length - 1; i++) {
-    for (let j = i + 1; j < length; j++) {
-      if ((data[i] + data[j]) === 2020) {
-        return (data[i] * data[j]);
-      }
-    }
+  for (let i = 1; i < length; i++) {
+    if (data[i] > prev) up++;
+
+    prev = data[i];
   }
 
-  return "not found"
+  return up;
+}
+
+function sum3(data: number[], start: number) {
+  return data[start] + data[start + 1] + data[start + 2];
 }
 
 export function part2() {
   const data = cleanAndParse(input, Number);
   const { length } = data;
 
-  for (let i = 0; i < length - 2; i++) {
-    for (let j = i + 1; j < length - 1; j++) {
-      for (let k = j + 1; k < length; k++) {
-        if ((data[i] + data[j] + data[k]) === 2020) {
-          return (data[i] * data[j] * data[k]);
-        }
-      }
-    }
+  let prev = sum3(data, 0);
+  let up = 0;
+
+  for (let i = 1; i < length - 2; i++) {
+    const sum = sum3(data, i);
+
+    if (sum > prev) up++;
+
+    prev = sum;
   }
 
-  return "not found"
+  return up;
 }

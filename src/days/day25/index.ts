@@ -1,18 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {input} from './input';
-import {cleanAndParse, modular} from '../../utils';
+import {cleanAndParse} from '../../utils';
 
+export const meta = {};
 
 export function part1() {
-  const [card, door] = cleanAndParse(input, Number);
-  const {log, pow} = modular(20201227);
-
-  const cardSecret =  log(7)(card);
-
-  return pow(door, cardSecret);
+  const data = cleanAndParse(input, Number);
+  return `${data}`;
 }
 
 export function part2() {
   return "Merry Xmas!";
 }
-

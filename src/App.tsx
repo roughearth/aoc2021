@@ -59,8 +59,8 @@ function App() {
 
   return (
     <>
-      <h1>AoC 2020 - Day {day}</h1>
-      <p><a href={`https://adventofcode.com/2020/day/${day}`} target="_blank" rel="noreferrer">Problem</a></p>
+      <h1>AoC 2021 - Day {day}</h1>
+      <p><a href={`https://adventofcode.com/2021/day/${day}`} target="_blank" rel="noreferrer">Problem</a></p>
       <div className="parts">
         <div className="part">
           <h2>Part 1</h2>
@@ -84,8 +84,8 @@ function App() {
       <ul>
         {leaderBoardMap && leaderBoardMap.map(([id, name]) => (
           <li key={id}>
-            <a href={`https://adventofcode.com/2020/leaderboard/private/view/${id}`} target="_blank" rel="noreferrer">{name} leaderboard</a>
-            {" | "}<a href={`https://adventofcode.com/2020/leaderboard/private/view/${id}.json`} target="_blank" rel="noreferrer">(json)</a>
+            <a href={`https://adventofcode.com/2021/leaderboard/private/view/${id}`} target="_blank" rel="noreferrer">{name} leaderboard</a>
+            {" | "}<a href={`https://adventofcode.com/2021/leaderboard/private/view/${id}.json`} target="_blank" rel="noreferrer">(json)</a>
           </li>
         ))}
         <li>Choose day <select value={day} onChange={changeDay}>

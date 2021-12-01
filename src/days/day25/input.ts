@@ -1,3 +1,1 @@
-export const input = `
-11239946
-10464955`;
+export const input = ``;
