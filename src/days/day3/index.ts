@@ -20,8 +20,6 @@ export function part1() {
      }
     }
 
-    console.log({ones, i, bitSize, count})
-
     if (ones > count / 2) {
       gammaArray[i] = '1';
       epsilonArray[i] = '0';
