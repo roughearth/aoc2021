@@ -4,7 +4,7 @@ import {cleanAndParse} from '../../utils';
 export const meta = {};
 
 export function part1() {
-  const data = cleanAndParse(input, Array.from);
+  const data = cleanAndParse(input, s => Array.from(s));
 
   const gammaArray: string[] = ['0'];
   const epsilonArray: string[] = ['0'];
@@ -37,7 +37,7 @@ export function part1() {
 }
 
 export function part2() {
-  const data = cleanAndParse(input, Array.from);
+  const data = cleanAndParse(input, s => Array.from(s));
 
   let oxygenOptions = [...data];
   let co2Options = [...data];

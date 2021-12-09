@@ -1,13 +1,13 @@
 export function cleanAndParse<T = string>(
   input: string,
-  parse: (s: string) => T = (s) => (s as unknown as T),
+  parse: (s: string, i: number) => T = (s) => (s as unknown as T),
   {separator = "\n"}: {separator?: string} = {}
 ) {
   return input
     .trim()
     .split(separator)
     .map(
-      line => parse(line.trim())
+      (line, i) => parse(line.trim(), i)
     );
 }
 
