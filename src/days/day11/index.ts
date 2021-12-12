@@ -1,5 +1,5 @@
 import {input} from './input';
-import {cleanAndParse, CoordinateRange, coordinates, neighbours, SafetyNet, simpleRange} from '../../utils';
+import {cleanAndParse, coordinates, neighbours, simpleRange} from '../../utils';
 
 export const meta = {};
 
@@ -11,11 +11,6 @@ function octopus(energy: string, row: number, column: number) {
 }
 type Octopus = ReturnType<typeof octopus>;
 type Grid = Octopus[][];
-
-function visualise(data: Grid) {
-  const viz = data.map(l => l.map(o => o.energy).join("")).join("\n");
-  console.log(viz);
-}
 
 function tryFlash(octopus: Octopus, flashed: Set<Octopus>, grid: Grid) {
   if(octopus.energy > 9 && !flashed.has(octopus)) {
