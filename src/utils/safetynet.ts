@@ -21,11 +21,11 @@ export function safetyNet({
     fails(logMessage) {
       duration = Math.round(performance.now() - start);
       if (++ct > maxLoops){
-        reason = "Too many loops";
+        reason = "Too many loops. Controlled by `meta.maxLoops`.  Use a `logMessage` function to show intermediate steps.";
         return true;
       }
       if (duration > maxMs) {
-        reason = "Too long";
+        reason = "Too long. Controlled by `meta.maxMs`. Use a `logMessage` function to show intermediate steps.";
         return true;
       }
 
