@@ -1,5 +1,5 @@
-import {eg1, input} from './input';
-import {cleanAndParse, orthogonalNeighbours, SafetyNet} from '../../utils';
+import {input} from './input';
+import {cleanAndParse, orthogonalNeighbours} from '../../utils';
 
 export const meta = {};
 
