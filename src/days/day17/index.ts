@@ -13,7 +13,6 @@ const minX = Math.ceil((Math.sqrt(1 + 8 * input[0][0]) - 1) / 2)
 
 const maxX = input[0][1];
 const minY = input[1][0];
-const maxY = part1();
 
 function pos(step: number, startX: number, startY: number): [number, number] {
   const xLim = Math.min(startX, step);
@@ -61,7 +60,7 @@ export function part2() { // 2555
   const vels = new Set<string>();
 
   for (let x = minX; x <= maxX; x++) {
-    for (let y = minY; y <= maxY; y++) {
+    for (let y = minY; y <= -minY; y++) { // -minY is the value that's used for part 1
       let step = 0;
       let hit = false;
       let p: [number, number];
