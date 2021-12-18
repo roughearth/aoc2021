@@ -1,5 +1,3 @@
-import { SafetyNet } from "../../utils";
-
 export const meta = {};
 
 // const input = [[20, 30], [-10, -5]];  // example
