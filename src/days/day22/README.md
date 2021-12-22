@@ -8,5 +8,7 @@ per dimension...
 
 1. Split each dim in to [below, inside, above]
 2. Generate candidate cuboids for all 27 combinations
-3. If its valid, add it to aOnly, bOnly or both by testing
+3. For each of these, if its valid, add it to aOnly, bOnly or both by testing
+
+
 

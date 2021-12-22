@@ -1,14 +1,10 @@
-import {eg0, eg1, input} from './input';
-import {ArrayKeyedMap, cleanAndParse, CoordinateRange, coordinates, SafetyNet} from '../../utils';
+import {input} from './input';
+import {cleanAndParse} from '../../utils';
 
 export const meta = {
   maxLoops: 1e10,
   maxMs: 600_000
 };
-
-function consoleLog(...msg: any[]) {
-  // console.log(...msg);
-}
 
 type DimRange = [number, number];
 type Cuboid = [DimRange, DimRange, DimRange];
@@ -18,8 +14,6 @@ type Optional<T> = T | undefined;
 const X = 0;
 const Y = 1;
 const Z = 2;
-
-const DIMS = [X, Y, Z];
 
 const BELOW = 0;
 const INSIDE = 1;
@@ -48,10 +42,6 @@ function parseLine(s: string): Instruction {
     }) as DimRange) as Cuboid;
 
   return [dims, state, large];
-}
-
-function getRange(d: DimRange[]): CoordinateRange {
-  return d;
 }
 
 function ifValidDimRange(rFrom: number, rTo: number): DimRange | undefined {
@@ -109,6 +99,13 @@ function sizeOfCuboid(cuboid: Cuboid): number {
   );
 }
 
+function subtract(take: Cuboid, from: Cuboid): Cuboid[] {
+  // divide `from` in to the 27 segments of `take` Union `from` centred on `take` intersection `from`
+  // return only those segments that are in `from`
+
+  return split(from, take)[0];
+}
+
 function split(a: Cuboid, b: Cuboid): [Cuboid[], Cuboid[], Cuboid[]] {
   const aOnly: Cuboid[] = [];
   const both: Cuboid[] = [];
@@ -154,7 +151,7 @@ function split(a: Cuboid, b: Cuboid): [Cuboid[], Cuboid[], Cuboid[]] {
   return [aOnly, both, bOnly];
 }
 
-function totalSize(cuboids: Map<string, Cuboid>) {
+function totalSize(cuboids: Set<Cuboid>) {
   let total = 0;
 
   for (let cuboid of cuboids.values()) {
@@ -164,94 +161,40 @@ function totalSize(cuboids: Map<string, Cuboid>) {
   return total;
 }
 
-export function part1(safetyNet: SafetyNet) {
-  console.clear();
-  // console.log("start");
-  const unfiltered = cleanAndParse(eg1, parseLine);
-  const data = unfiltered.filter(([,,large]) => !large);
+function runPart(src: string, smallOnly: boolean) {
+  let data = cleanAndParse(src, parseLine);
 
-  const onCuboids = new Map<string, Cuboid>([
-    [JSON.stringify(data[0][CUBOID]), data[0][CUBOID]]
-  ]);
-
-  console.log(
-    "start",
-    unfiltered.length,
-    data.length,
-    sizeOfCuboid(data[0][CUBOID]),
-    totalSize(onCuboids),
-    Array.from(onCuboids).map(c => JSON.stringify(c))
-  );
-
-  let iteration = [0, 0];
-  for (let [newCuboid, setToOn] of data.slice(1)) {
-    let used = false;
-    // iteration[0]++;
-    // iteration[1] = 0;
-    // if (iteration[0] > 7) console.log("iteration", iteration.join("."), onCuboids.size, JSON.stringify(newCuboid));
-
-    for (let [currentlyOnKey, currentlyOn] of (new Map(onCuboids))) {
-      if (safetyNet.fails()) {
-        throw new Error(safetyNet.reason);
-      }
-      // iteration[1]++
-      // if (iteration[0] > 7) console.log("iteration", iteration.join("."));
-
-
-      if (intersects(currentlyOn, newCuboid)) {
-        if (contains(currentlyOn, newCuboid) && setToOn) {
-          consoleLog("on contains new and 'on'");
-          used = true;
-        }
-        else if(contains(newCuboid, currentlyOn) && !setToOn) {
-          consoleLog("new contains on and 'off'");
-
-          onCuboids.delete(currentlyOnKey);
-          used = true;
-        }
-        else {
-          const [existing,, additions] = split(currentlyOn, newCuboid);
-
-          if (setToOn) {
-            consoleLog("split and 'on' so adding", additions.length);
-
-            used = true;
-            for (let add of additions) {
-              onCuboids.set(JSON.stringify(add), add);
-            }
-          }
-          else {
-            onCuboids.delete(currentlyOnKey);
-            consoleLog("split and 'off', so replacing", currentlyOn, "with", existing.length);
-
-            used = true;
-            for (let add of existing) {
-              onCuboids.set(JSON.stringify(add), add);
-            }
-          }
-        }
-      }
-    }
-
-    if (!used) {
-      consoleLog("not used so adding", newCuboid);
-
-      onCuboids.set(JSON.stringify(newCuboid), newCuboid);
-    }
-
-    consoleLog(
-      setToOn,
-      sizeOfCuboid(newCuboid),
-      totalSize(onCuboids),
-      Array.from(onCuboids).map(c => JSON.stringify(c))
-    );
+  if (smallOnly) {
+    data = data.filter(([,,large]) => !large);
   }
 
-  console.log("end")
+  const first = data[0][CUBOID];
+
+  const onCuboids = new Set<Cuboid>([first]);
+
+  for (let [newCuboid, setToOn] of data.slice(1)) {
+    // remove the overlapped parts of already on cuboids
+    for (let onCuboid of onCuboids) {
+      if (intersects(onCuboid, newCuboid)) {
+        const difference = subtract(newCuboid, onCuboid);
+
+        onCuboids.delete(onCuboid);
+        difference.forEach(c => onCuboids.add(c));
+      }
+    }
+
+    if (setToOn) {
+      onCuboids.add(newCuboid);
+    }
+  }
+
   return totalSize(onCuboids);
 }
 
+export function part1() {
+  return runPart(input, true);
+}
+
 export function part2() {
-  const data = cleanAndParse(input, Number);
-  return `{data}`;
+  return runPart(input, false);
 }
