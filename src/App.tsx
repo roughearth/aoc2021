@@ -4,7 +4,8 @@ import './App.css';
 import { safetyNet, timeAndRun } from './utils';
 import leaderBoardMap from './.leaderboardListRc.json'
 
-const today = Math.min(25, (() => {
+const force = 0;
+const today = force || Math.min(25, (() => {
   const now = new Date();
   return now.getDate();
 })());
