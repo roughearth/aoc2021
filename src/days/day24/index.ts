@@ -1,4 +1,4 @@
-import {eg1, eg2, eg3, input} from './input';
+import {input} from './input';
 import {cleanAndParse} from '../../utils';
 
 export const meta = {};
@@ -45,10 +45,8 @@ function value(a: string, state: State): number {
 }
 
 function executeLine({cmd, a, b}: Instruction, state: State, input: number[]) {
-  // console.log(cmd, a, b, state.z, value(a, state), value(b, state), input);
   switch (cmd) {
     case 'inp': {
-      // console.log("<-------------------------->", state.z);
       state[a] = input.shift() as number;
       break;
     }
@@ -74,7 +72,6 @@ function executeLine({cmd, a, b}: Instruction, state: State, input: number[]) {
       break;
     }
   }
-  // console.log(`${cmd}, ${a}, ${b ?? '-'}`.padEnd(10, ' '), '->', state);
 }
 
 function runRoutine(prog: Instruction[], inputBuffer: number[], state: State = {w: 0, x: 0, y: 0, z: 0}) {
