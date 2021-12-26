@@ -1,10 +1,11 @@
-import {eg0, eg1, input} from './input';
+import {input} from './input';
 import {ArrayKeyedMap, coordinates, simpleRange} from '../../utils';
 
 export const meta = {};
 
 type Grid = ReturnType<typeof ArrayKeyedMap>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function visualise(grid: Grid, height: number, width: number) {
   const v: string[][] = [];
 

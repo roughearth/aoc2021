@@ -1,1 +1,11 @@
-export const input = ``;
+export const eg1 = `#############
+#...........#
+###B#C#B#D###
+  #A#D#C#A#
+  #########`;
+
+export const input = `#############
+#...........#
+###D#C#B#C###
+  #D#A#A#B#
+  #########`;
