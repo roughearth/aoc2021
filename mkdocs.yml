@@ -1,7 +1,7 @@
 site_name: AoC 2021
 dev_addr: localhost:4001
 docs_dir: consumer-docs
-site_dir: consumer-docs-dist
+site_dir: docs
 theme:
   logo: /assets/logo.png
   name: material
