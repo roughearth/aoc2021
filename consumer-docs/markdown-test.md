@@ -42,7 +42,7 @@ Orange
 
 A block
 
-```ts
+```js
 function double (n: number) {
   return n + n;
 }
